@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
 //** ENGR-2350 Lab 2
 //** NAMEs: Austin Schlutter, Zade
-//** RINs: XXXX, YYYY
+//** RINs: 662080932, YYYY
 //** Section: 2
 ////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,6 @@ void printResult(int8_t *guess,int8_t *result);
 void Colordle();
 void resetColordle();
 void generateRandom();
-void wait(uint16_t time, uint16_t counter);
 
 // Add global variables here, as needed.
 const uint8_t Lpattern = 4; // The pattern length. Could be changed if desired.
@@ -32,7 +31,7 @@ uint8_t guessCount = 0;
 int8_t index = 0;
 int8_t checkWin = 0;
 int8_t res[] = {0, 0, 0, 0};
-uint16_t totalTime = 0;
+float totalTime = 0;
 uint8_t start = 0;
 
 
@@ -43,34 +42,40 @@ int main(void) {    //// Main Function ////
     timerInit(&config);
 
     // Place initialization code (or run-once) code here
-
-    printf("Welcome to Colordle!\r\nPress pushbutton to start\r\n\r\n");
-
-    resetColordle();
-    while (!start) // if the game is not currently running
+    while (1)
     {
-        if (GPIO_getInputPinValue(GPIO_PORT_P6, GPIO_PIN1)) // check if button press
+        printf("Welcome to Colordle!\r\nPress pushbutton to start\r\n\r\n");
+
+        resetColordle();
+        readBumpers();
+        while (!start) // if the game is not currently running
         {
-            while (GPIO_getInputPinValue(GPIO_PORT_P6, GPIO_PIN1))
+            readBumpers();
+            if (GPIO_getInputPinValue(GPIO_PORT_P6, GPIO_PIN1)) // check if button press
             {
+                while (GPIO_getInputPinValue(GPIO_PORT_P6, GPIO_PIN1))
+                {
+                    __delay_cycles(240e3);
+                }
                 __delay_cycles(240e3);
-            }
-            __delay_cycles(240e3);
-            if (!GPIO_getInputPinValue(GPIO_PORT_P6,  GPIO_PIN1))
-            {
-                start = 1;
-                generateRandom();
-                setRBG(6);
-                timer_reset_count = 0;
-                wait(10, timer_reset_count);
-                totalTime = 0;
+                if (!GPIO_getInputPinValue(GPIO_PORT_P6,  GPIO_PIN1))
+                {
+                    Timer_A_startCounter(TIMER_A2_BASE, TIMER_A_UP_MODE);
+                    start = 1;
+                    generateRandom();
+                    setRGB(6);
+                    timer_reset_count = 0;
+                    while (10 > timer_reset_count);
+                    totalTime = 0;
+                    setRGB(-1);
+                }
             }
         }
-    }
 
-    while (start)
-    {
-        Colordle();
+        while (start)
+        {
+            Colordle();
+        }
     }
 }    //// Main Function ////
 
@@ -81,11 +86,12 @@ void Colordle()
         int i = 0;
         for (i = 0; i < Lpattern; i++)
         {
-            guess[i] = NULL;
+            guess[i] = -1;
         }
 
-        printf("Timeout!\r\n----");
+        printf("Timeout!   ----");
         guessCount++;
+        timer_reset_count = 0;
     }
     else
     {
@@ -99,7 +105,7 @@ void Colordle()
         {
             setRGB(6);
             button_time = 0;
-            wait(5, button_time);
+            while (5 > button_time);
             setRGB(-1);
             index = 0;
         }
@@ -112,21 +118,28 @@ void Colordle()
         int j = 0;
         for (j = 0; j < Lpattern; j++)
         {
-            setRGB(res);
+            setRGB(res[j]);
             timer_reset_count = 0;
-            wait(5, timer_reset_count); // half second display
+            while (5 > timer_reset_count); // half second display
             setRGB(-1); // turn off after half second
             timer_reset_count = 0;
-            wait(5, timer_reset_count); // wait another half second
+            while (5 > timer_reset_count); // wait another half second
         }
         guessCount++;
         timer_reset_count = 0;
+        int x = 0;
+        for (x = 0; x < Lpattern; x++)
+        {
+            guess[x] = -1;
+        }
+        index = 0;
     }
 
     if (guessCount > 5)
     {
-        printf("Failure: (\r\n\r\n");
-        start = 0;
+        printf("Failure: \r\n\r\n");
+        resetColordle();
+        return;
     }
     if (checkWin == 4)
     {
@@ -143,6 +156,7 @@ void resetColordle()
     button_time = 0;
     guessCount = 0;
     start = 0;
+    checkWin = 0;
 }
 
 void generateRandom()
@@ -150,13 +164,8 @@ void generateRandom()
     int i = 0;
     for (i = 0; i < Lpattern; i++)
     {
-        sol[i] = rand() % 5;
+        sol[i] = rand()%6;
     }
-}
-
-void wait(uint16_t time, uint16_t counter) // waits time in 1/10 seconds
-{
-    while (counter < time);
 }
 
 void GPIOInit() {
@@ -272,12 +281,8 @@ int8_t readBumpers()
            return 5;
        }
    }
-
-   else
-   {
-       setRGB(-1);
-       return -1;
-   }
+   setRGB(-1);
+   return -1;
 }
 
 void setRGB(int8_t color) {
@@ -422,7 +427,6 @@ void Timer_ISR()
     timer_reset_count++;
     button_time++;
     totalTime++;
-    GPIO_toggleOutputOnPin(GPIO_PORT_P1,GPIO_PIN0);
     Timer_A_clearInterruptFlag(TIMER_A2_BASE);
 
 }
