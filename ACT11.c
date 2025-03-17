@@ -26,7 +26,7 @@ int32_t enc_counts_track;
 int32_t enc_counts;
 uint8_t enc_flag;
 
-int main() {    //// Main Function ////
+sint main() {    //// Main Function ////
   
     // Add local variables here as needed.
 
@@ -45,10 +45,10 @@ int main() {    //// Main Function ////
         if(enc_flag)
         { // Check to see if capture occurred
             enc_flag = 0; // reset capture flag
-            uint16_t distance = enc_total * 220 ; // Calculate distance travelled in mm
-            float delta_t = enc_counts/24000000; // Calculate the time between previous and current event
-            uint16_t speed_rpm = (1 / 360) * (1 / delta_t) * 60; // Calculate the instantaneous wheel speed in rpm
-            uint16_t speed_mm = ((2 * 3.14) / (360 * delta_t)) * 35; // Calculate the instantaneous car speed in mm/s
+            uint16_t distance = enc_total * 220.0/360.0 ; // Calculate distance travelled in mm
+            float delta_t = enc_counts/24000000.0; // Calculate the time between previous and current event
+            uint16_t speed_rpm = (1.0 / 360.0) * (1.0 / delta_t) * 60.0; // Calculate the instantaneous wheel speed in rpm
+            uint16_t speed_mm = ((2.0 * 3.14) / (360.0 * delta_t)) * 35.0; // Calculate the instantaneous car speed in mm/s
             printf("%5u mm\t%6u\t\t%.4f s\t%5u rpm\t%5u mm/s\r\n",distance,enc_counts,delta_t,speed_rpm,speed_mm);
         }
     }   
