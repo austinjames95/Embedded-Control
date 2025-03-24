@@ -27,7 +27,7 @@ Timer_A_CompareModeConfig compare_L, compare_R;
 Timer_A_CaptureModeConfig capture_L, capture_R;
 
 // PWM Variables
-uint16_t compareL = 240, compareR = 240;
+uint16_t compareL = 120, compareR = 120;
 uint16_t period = 480;
 
 // Timer
@@ -43,7 +43,7 @@ uint32_t sum_counts_L = 0, sum_counts_R = 0;
 uint8_t count_samples_L = 0, count_samples_R = 0;
 
 // Movement Vector
-uint16_t pathA[] = {120, 2, 3, 4};
+uint16_t pathA[] = {125, 2, 3, 4};
 uint16_t pathB[];
 
 const uint16_t setpoint = 65000;
@@ -96,6 +96,7 @@ void Drive(uint16_t directions[], uint8_t size)
             GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
             GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN6);
 
+
             uint16_t target_counts = distance * 100;
 
             Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_3, compareR);
@@ -111,6 +112,7 @@ void Drive(uint16_t directions[], uint8_t size)
             printf("Turning right\r\n");
             enc_total_R = 0;
             uint16_t target_counts = 360;
+
             GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN7);
             GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN6);
             __delay_cycles(240e3);
@@ -118,7 +120,7 @@ void Drive(uint16_t directions[], uint8_t size)
             GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN6);
             GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN5);
 
-            period = 100;
+            compareR = 80;
             Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_3, compareR);
 
             while(enc_total_R < target_counts);
@@ -137,7 +139,7 @@ void Drive(uint16_t directions[], uint8_t size)
             GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
             GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN4);
 
-            period = 100;
+            compareL = 80;
             Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_4, compareL);
 
             while(enc_total_L < target_counts);
@@ -156,12 +158,20 @@ void Drive(uint16_t directions[], uint8_t size)
 
             GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN6);
             GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN5);
+            GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN4);
+            GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN7);
 
-            period = 100;
+
+            compareR = 80;
+            compareL = 80;
+
             Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_3, compareR);
+            Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_4, compareL);
 
-            while(enc_total_R < target_counts);
+            while(enc_total_R < target_counts ||enc_total_R < target_counts);
             GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN6);
+            GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN7);
+            GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN4);
             //move 180 degrees right ways
         }
         else if (movement == 5)
@@ -177,7 +187,7 @@ void Drive(uint16_t directions[], uint8_t size)
             GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN6);
             GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN5);
 
-            period = 100;
+            //period = 100;
             Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_3, compareR);
 
             while(enc_total_R < target_counts);
@@ -291,7 +301,7 @@ void encoderISR()
             }
             count_samples_L = 0;
             sum_counts_L = 0;
-            printf("encoder counts %u,  compare value %u\r\n", avg_L, compareL);
+            //printf("encoder counts %u,  compare value %u\r\n", avg_L, compareL);
             Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_4, compareL);
         }
     }
@@ -323,7 +333,7 @@ void encoderISR()
             }
             count_samples_R = 0;
             sum_counts_R = 0;
-            printf("encoder counts %u,  compare value %u\r\n", avg_R, compareR);
+            //printf("\t\t\t\t\t\t\t\t\t\tencoder counts %u,  compare value %u\r\n", avg_R, compareR);
             Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_3, compareR);
         }
     }
