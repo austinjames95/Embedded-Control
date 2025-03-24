@@ -1,11 +1,11 @@
 The following document is how the numbers translate to directions
 
 First Number of the 3 digits (I.E. [x]23) = The movement direction
-1 = forward
-2 = move 90 degrees right
-3 = move 90 degrees left
-4 = turn around 180 degrees
-5 = turn 48 degrees down
+1 = forward (would need time
+2 = move 90 degrees right (would only be 2 because no time needed)
+3 = move 90 degrees left (would only be 3 because no time needed)
+4 = turn around 180 degrees (would only be 4 becuase no time needed)
+5 = turn 48 degrees down (would only be 5 becuase no time needed)
 
 Second Number and Third Number of the 3 digits (I.E. 1[x][y]) = The time it should move
 
