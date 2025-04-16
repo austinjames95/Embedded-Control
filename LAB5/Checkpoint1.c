@@ -80,14 +80,14 @@ int main() {    /** Main Function ****/
     {
         SS1 = GPIO_getInputPinValue(GPIO_PORT_P3, GPIO_PIN2);
 
-        if(runControl){    // If 100 ms has passed
+        if (runControl){    // If 100 ms has passed
             runControl = 0;    // Reset the 100 ms flag
 
 
             readCompass();
 
 
-            if(SS1 == 1)
+            if (SS1 == 1)
             {
                 //Convert the rollmeasurement to a differential speed (in PWM)
                 diffSpeed = -roll/256.0;  //max speed: .5 pwm distance between wheels: 15mm min turn rad: 7.5mm
@@ -101,12 +101,12 @@ int main() {    /** Main Function ****/
 
             desSpeed = tilt/256.0 ;  // returns value between -.5 and .5
             // Keep the values within desired range:
-            if(desSpeed < 0.1 && desSpeed > -0.1)
+            if (desSpeed < 0.1 && desSpeed > -0.1)
             {
                 desSpeed = 0;
             }
 
-            if(diffSpeed < 0.15 && diffSpeed > -.15)
+            if (diffSpeed < 0.15 && diffSpeed > -.15)
             {
                 diffSpeed = 0;
             }
@@ -115,7 +115,7 @@ int main() {    /** Main Function ****/
             //printf("%f\t%f\t\r\n",desSpeed,diffSpeed);
             // wheel speed control
             //set direction of the wheel
-            if((desSpeedL) > 0)
+            if ((desSpeedL) > 0)
             {
                 //set foward
                 GPIO_setOutputLowOnPin(GPIO_PORT_P5,GPIO_PIN4);
@@ -161,23 +161,23 @@ int main() {    /** Main Function ****/
             CCR_valR = PWM_setR*959;
             CCR_valL = PWM_setL*959;
 
-            if(CCR_valR > 479)
+            if (CCR_valR > 479)
             {
                 CCR_valR = 479;
             }
-            else if(CCR_valR < 95)
+            else if (CCR_valR < 95)
             {
                 CCR_valR = 95;
             }
-            if(CCR_valL > 479)
+            if (CCR_valL > 479)
             {
                 CCR_valL = 479;
             }
-            else if(CCR_valL < 95)
+            else if (CCR_valL < 95)
             {
                 CCR_valL = 95;
             }
-            if(desSpeed == 0 && diffSpeed ==0)
+            if (desSpeed == 0 && diffSpeed ==0)
             {
                 CCR_valR = 0;
                 CCR_valL = 0;
