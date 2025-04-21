@@ -134,28 +134,6 @@ int8_t roll = 0;
             desSpeedR = desSpeed - diffSpeed;
             desSpeedL = desSpeed + diffSpeed;
 
-            if ((desSpeedL) > 0)
-            {
-                 // forward
-                GPIO_setOutputLowOnPin(GPIO_PORT_P5,GPIO_PIN4);
-            }
-            else
-            {
-                // backward
-                GPIO_setOutputHighOnPin(GPIO_PORT_P5,GPIO_PIN4);
-            }
-
-            if ((desSpeedR) > 0)
-            {
-                // forward
-                GPIO_setOutputLowOnPin(GPIO_PORT_P5,GPIO_PIN5);
-            }
-            else
-            {
-                // backward
-                GPIO_setOutputHighOnPin(GPIO_PORT_P5,GPIO_PIN5);
-            }
-
             if (desSpeed == 0 && diffSpeed == 0)
             {
                 measuredPWML = 0;
@@ -203,6 +181,28 @@ int8_t roll = 0;
                 CCR_valL = 0;
                 pwmR = 0;
                 pwmL = 0;
+            }
+            
+            if ((desSpeedL) > 0)
+            {
+                 // forward
+                GPIO_setOutputLowOnPin(GPIO_PORT_P5,GPIO_PIN4);
+            }
+            else
+            {
+                // backward
+                GPIO_setOutputHighOnPin(GPIO_PORT_P5,GPIO_PIN4);
+            }
+
+            if ((desSpeedR) > 0)
+            {
+                // forward
+                GPIO_setOutputLowOnPin(GPIO_PORT_P5,GPIO_PIN5);
+            }
+            else
+            {
+                // backward
+                GPIO_setOutputHighOnPin(GPIO_PORT_P5,GPIO_PIN5);
             }
             
             int deltaEncL = enc_total_L - prev_enc_L;
