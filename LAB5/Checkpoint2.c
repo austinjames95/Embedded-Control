@@ -60,8 +60,7 @@ float pwmR, pwmL = 0.0;
 float error_sumR, error_sumL = 0.0;
 float ki, kp = 0.0;
 float errorR, errorL;
-int prev_heading_error = 0.0;
-float real_pwmR, real_pwmL = 0.0;
+float measuredPWMR, measuredPWML = 0.0;
 
 eUSCI_I2C_MasterConfig config;
 
@@ -98,8 +97,8 @@ int8_t roll = 0;
             else
             {
                 //delta theta calculations
-                deltaTheta = (0.610865/149)*(enc_total_L - enc_total_R);
-                calcHeading += deltaTheta * 57.29578 * 10;
+                deltaTheta = (0.6108/149) * (enc_total_L - enc_total_R);
+                calcHeading += deltaTheta * 572.96;
 
                 prevHeadingError = headingError;
                 headingError = Heading - calcHeading;
@@ -121,8 +120,7 @@ int8_t roll = 0;
             }
 
 
-            desSpeed = tilt/256.0;
-            //desSpeed = 0;
+            desSpeed = tilt / 256.0;
 
             if (desSpeed < 0.1 && desSpeed > -0.1)
             {
@@ -160,17 +158,17 @@ int8_t roll = 0;
 
             if (desSpeed == 0 && diffSpeed == 0)
             {
-                real_pwmL = 0;
-                real_pwmR = 0;
+                measuredPWML = 0;
+                measuredPWMR = 0;
             }
             else
             {
-                real_pwmR = ((15000.0/TachR_avg));
-                real_pwmL = ((15000.0/TachL_avg));
+                measuredPWMR = ((15000.0/TachR_avg));
+                measuredPWML = ((15000.0/TachL_avg));
             }
 
-            errorR = fabs(desSpeedR) - fabs(real_pwmR);
-            errorL = fabs(desSpeedL) - fabs(real_pwmL);
+            errorR = fabs(desSpeedR) - fabs(measuredPWMR);
+            errorL = fabs(desSpeedL) - fabs(measuredPWML);
 
             error_sumR += errorR;
             error_sumL += errorL;
@@ -210,8 +208,14 @@ int8_t roll = 0;
             int deltaEncL = enc_total_L - prev_enc_L;
             int deltaEncR = enc_total_R - prev_enc_R;
 
-            if (!GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN2)) { deltaEncL *= -1; }
-            if (!GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN0)) { deltaEncR *= -1; }
+            if (!GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN2)) 
+            { 
+                deltaEncL *= -1; 
+            }
+            if (!GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN0)) 
+            { 
+                deltaEncR *= -1; 
+            }
 
             total_enc_L += deltaEncL;
             total_enc_R += deltaEncR;
