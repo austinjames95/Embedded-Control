@@ -90,7 +90,7 @@ int8_t roll = 0;
             runControl = 0;    // Reset the 100 ms flag
 
             readCompass();
-            if (GPIO_getInputPinValue(GPIO_PORT_P3, GPIO_PIN2))
+            if (GPIO_getInputPinValue(GPIO_PORT_P3, GPIO_PIN3))
             {
                 diffSpeed = 0;
             }
