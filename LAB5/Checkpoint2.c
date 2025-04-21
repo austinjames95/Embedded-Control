@@ -52,7 +52,7 @@ uint8_t runControl = 0; // Flag to denote that 100ms has passed and control shou
 float desSpeed, desSpeedR, desSpeedL, diffSpeed = 0;
 float calcHeading = 0, delta_theta = 0;
 float headingError = 0, prevHeadingError = 0;
-float kpHead 0.25;
+float kpHead = 0.25;
 float kdHead = 0.02;
 uint16_t Heading = 0;
 float CCR_valR, CCR_valL = 0.0;
