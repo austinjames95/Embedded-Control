@@ -52,13 +52,14 @@ uint8_t runControl = 0; // Flag to denote that 100ms has passed and control shou
 float desSpeed, desSpeedR, desSpeedL, diffSpeed = 0;
 float calcHeading = 0, delta_theta = 0;
 float headingError = 0, prevHeadingError = 0;
-float kpHead.25, kdHead = 0.02;
+float kpHead 0.25;
+float kdHead = 0.02;
 uint16_t Heading = 0;
 float CCR_valR, CCR_valL = 0.0;
-float PWM_setR, PWM_setL = 0.0;
-float error_sumR, error_sumL;
+float pwmR, pwmL = 0.0;
+float error_sumR, error_sumL = 0.0;
 float ki, kp = 0.0;
-float error_R, error_L;
+float errorR, errorL;
 int prev_heading_error = 0.0;
 float real_pwmR, real_pwmL = 0.0;
 
@@ -168,17 +169,17 @@ int8_t roll = 0;
                 real_pwmL = ((15000.0/TachL_avg));
             }
 
-            error_R = fabs(desSpeedR) - fabs(real_pwmR);
-            error_L = fabs(desSpeedL) - fabs(real_pwmL);
+            errorR = fabs(desSpeedR) - fabs(real_pwmR);
+            errorL = fabs(desSpeedL) - fabs(real_pwmL);
 
-            error_sumR += error_R;
-            error_sumL += error_L;
+            error_sumR += errorR;
+            error_sumL += errorL;
 
-            PWM_setR += kp*error_R + ki*error_sumR;
-            PWM_setL += kp*error_L + ki*error_sumL;
+            pwmR += kp * errorR + ki * error_sumR;
+            pwmL += kp * errorL + ki * error_sumL;
 
-            CCR_valR = PWM_setR * 959;
-            CCR_valL = PWM_setL * 959;
+            CCR_valR = pwmR * 959;
+            CCR_valL = pwmL * 959;
 
             // PWM speed settings
 
@@ -202,11 +203,10 @@ int8_t roll = 0;
             {
                 CCR_valR = 0;
                 CCR_valL = 0;
-                PWM_setR = 0;
-                PWM_setL = 0;
+                pwmR = 0;
+                pwmL = 0;
             }
-            //printf("real_pwmR: %.2f PWM_setR; %.2f DES: %.2f    ERR: %.4f    SUM: %.2f    CCR: %.2f\r\n", real_pwmR, PWM_setR, desSpeed, error_R, error_sumR, CCR_valR);
-
+            
             int deltaEncL = enc_total_L - prev_enc_L;
             int deltaEncR = enc_total_R - prev_enc_R;
 
